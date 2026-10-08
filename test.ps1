@@ -8,7 +8,8 @@ $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIden
 if (-not $isAdmin) {
     Write-Host "This needs to run as Administrator." -ForegroundColor Yellow
     Write-Host "Relaunching with elevation (you'll get a UAC prompt - click Yes)..." -ForegroundColor Yellow
-    Start-Process powershell -Verb RunAs -ArgumentList "-NoProfile -NoExit -File `"$PSCommandPath`""
+    # IMPORTANT: replace the URL below with YOUR actual short link
+    Start-Process powershell -Verb RunAs -ArgumentList '-NoProfile -NoExit -Command "irm is.gd/asontest | iex"'
     exit
 }
 Write-Host "[OK] Running as Administrator" -ForegroundColor Green
