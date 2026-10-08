@@ -26,17 +26,27 @@ if (-not $Logging) {
 
 Start-Transcript -Path "$InstallDir\bootstrap.log" -Append | Out-Null
 
-# bgpc.py (aur config.ini agar ho) USB se install folder mein copy
-if (-not (Test-Path "$ScriptDir\bgpc.py")) {
-    Write-Output "ERROR: bgpc.py nahi mili. Isay USB mein install.ps1 ke saath rakhein."
+# ---- Download bgpc.py from the same GitHub repo ----
+$bgpcUrl  = "https://raw.githubusercontent.com/fxgurv/ason-test/main/bgpc.py"
+$bgpcDest = "$InstallDir\bgpc.py"
+
+Write-Output "bgpc.py download kar raha hoon..."
+try {
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    Invoke-WebRequest -UseBasicParsing -Uri $bgpcUrl -OutFile $bgpcDest -ErrorAction Stop
+} catch {
+    Write-Output "ERROR: bgpc.py download nahi ho saka: $_"
     Stop-Transcript | Out-Null
     if ($Logging) { Read-Host "Enter dabayein..." }
     exit 1
 }
-Copy-Item "$ScriptDir\bgpc.py" "$InstallDir\bgpc.py" -Force
-if (Test-Path "$ScriptDir\config.ini") {
-    Copy-Item "$ScriptDir\config.ini" "$InstallDir\config.ini" -Force
-}
+
+# Optional: also download config.ini if it exists in the repo
+$configUrl  = "https://raw.githubusercontent.com/fxgurv/ason-test/main/config.ini"
+$configDest = "$InstallDir\config.ini"
+try {
+    Invoke-WebRequest -UseBasicParsing -Uri $configUrl -OutFile $configDest -ErrorAction SilentlyContinue
+} catch {}
 
 # Pehle se koi usable Python ho to wahi use karein (Microsoft Store wala stub nahi)
 function Find-Python {
