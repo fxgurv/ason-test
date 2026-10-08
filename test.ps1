@@ -1,21 +1,19 @@
 $ErrorActionPreference = "Stop"
 
-# Check if running as Administrator
 $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
+# If not admin, relaunch this same script elevated
 if (-not $isAdmin) {
     Write-Host "Requesting administrator rights..." -ForegroundColor Yellow
     try {
-        # Yahan apni GitHub raw URL daali hai
-        Start-Process powershell -Verb RunAs -ArgumentList '-NoProfile -NoExit -Command "irm https://raw.githubusercontent.com/YOURNAME/ason-test/main/test.ps1 | iex"'
-    }
-    catch {
+        Start-Process powershell -Verb RunAs -ArgumentList '-NoProfile -NoExit -Command "irm https://is.gd/asontest | iex"'
+    } catch {
         Write-Host "Admin permission was denied. Installation cancelled." -ForegroundColor Red
     }
     return
 }
 
-# ====================== ADMIN SECTION ======================
+# Everything below runs as administrator
 Write-Host "Running as ADMIN: $isAdmin" -ForegroundColor Green
 
 $dir = "$env:USERPROFILE\HelloTest"
